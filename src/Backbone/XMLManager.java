@@ -12,10 +12,19 @@ import org.w3c.dom.*;
 public class XMLManager {
 	//Se tiene que modificar para la estructura que vamos a utilizar
 	
-	public void readXML(String xml) {
+	public String[] readXML(String userid) {
 		 try {
+			 	File fXmlFile;
+			 
+			 	if(System.getProperty("os.name").equals("Linux")){
+					
+					fXmlFile = new File(System.getProperty("user.dir")+"/"+userid+".xml");
 
-				File fXmlFile = new File(System.getProperty("user.dir")+"\\"+xml);
+				}else{
+					
+					fXmlFile = new File(System.getProperty("user.dir")+"\\"+userid+".xml");
+
+				}
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(fXmlFile);
@@ -26,7 +35,7 @@ public class XMLManager {
 
 				System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 
-				NodeList nList = doc.getElementsByTagName("staff");
+				NodeList nList = doc.getElementsByTagName("user");
 
 				System.out.println("----------------------------");
 
@@ -34,29 +43,32 @@ public class XMLManager {
 
 					Node nNode = nList.item(temp);
 
-					System.out.println("\nCurrent Element :" + nNode.getNodeName());
-
 					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
 						Element eElement = (Element) nNode;
 
-						System.out.println("Staff id : " + eElement.getAttribute("id"));
-						System.out.println("First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());
-						System.out.println("Last Name : " + eElement.getElementsByTagName("lastname").item(0).getTextContent());
-						System.out.println("Nick Name : " + eElement.getElementsByTagName("nickname").item(0).getTextContent());
-						System.out.println("Salary : " + eElement.getElementsByTagName("salary").item(0).getTextContent());
-
+						String email = eElement.getAttribute("email");
+						String first =  eElement.getAttribute("first");
+						String last = eElement.getAttribute("last");
+						String user = eElement.getAttribute("userid");
+						String pass = eElement.getAttribute("pass");
+						
+						String[] data = {email,first,last,user,pass};
+						
+						return data;
 					}
 				}
 			    } catch (Exception e) {
 				e.printStackTrace();
+				return null;
 			    }
+		return null;
 			  }
 
 
     
 	
-	public void saveToXML(String xml) {
+	public void saveToXML(String email, String pass, String userid, String first, String last) {
 		
 		try {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -64,48 +76,43 @@ public class XMLManager {
 
 		// root elements
 		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement("company");
-		doc.appendChild(rootElement);
-
-		// staff elements
-		Element staff = doc.createElement("Staff");
-		rootElement.appendChild(staff);
+		
+		Element staff = doc.createElement("user");
+		doc.appendChild(staff);
 
 		// set attribute to staff element
-		Attr attr = doc.createAttribute("id");
-		attr.setValue("1");
-		staff.setAttributeNode(attr);
-
 		// shorten way
 		// staff.setAttribute("id", "1");
-
-		// firstname elements
-		Element firstname = doc.createElement("firstname");
-		firstname.appendChild(doc.createTextNode("yong"));
-		staff.appendChild(firstname);
-
-		// lastname elements
-		Element lastname = doc.createElement("lastname");
-		lastname.appendChild(doc.createTextNode("mook kim"));
-		staff.appendChild(lastname);
-
-		// nickname elements
-		Element nickname = doc.createElement("nickname");
-		nickname.appendChild(doc.createTextNode("mkyong"));
-		staff.appendChild(nickname);
-
-		// salary elements
-		Element salary = doc.createElement("salary");
-		salary.appendChild(doc.createTextNode("100000"));
-		staff.appendChild(salary);
+		
+		staff.setAttribute("email", email);
+		System.out.println(email);
+		staff.setAttribute("pass", pass);
+		System.out.println(pass);
+		System.out.println(userid);
+		System.out.println(first);
+		System.out.println(last);
+		staff.setAttribute("userid", userid);
+		staff.setAttribute("first", first);
+		staff.setAttribute("last", last);
+		
 
 		// write the content into xml file
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(
-				new File(System.getProperty("user.dir")+"\\"+xml));
-
+		
+		StreamResult result;
+		
+		if(System.getProperty("os.name").equals("Linux")){
+		
+			result = new StreamResult(
+					new File(System.getProperty("user.dir")+"/"+userid+".xml"));
+		}else{
+			
+			result = new StreamResult(
+					new File(System.getProperty("user.dir")+"\\"+userid+".xml"));
+			
+		}
 		// Output to console for testing
 		// StreamResult result = new StreamResult(System.out);
 
@@ -123,11 +130,7 @@ public class XMLManager {
 	
 	public static void main(String[] args) {
 		
-		XMLManager reader = new XMLManager();
 		
-		reader.saveToXML("write.xml");
-		
-		reader.readXML("test.xml");
 		
 		
 		

@@ -1,29 +1,48 @@
 package Backbone;
 
+import java.io.File;
+
 public class User {
 	
 	private String email;
-	private String name;
+	private String first;
 	private String lastName;
 	private String pass;
-	private String ID;
+	private String userid;
 	
 	
-	User(String email, String name, String last, String pass, String ID){
+	User(String email, String pass, String user, String name, String last){
 		
 		this.email = email;
-		this.name = name;
+		this.first = name;
 		this.lastName = last;
 		this.pass = pass;
-		this.ID = ID;
+		this.userid = user;
+		
+		if(!new File(System.getProperty("user.dir")+"/"+userid+".xml").exists()){
+			
+			this.createXML();
+		
+		}
 		
 	}
 	
 	
+	private void createXML(){
+		
+		XMLManager manager = new XMLManager();
+		
+		manager.saveToXML(this.email, this.pass, this.userid, this.first, this.lastName);
+		
+		System.out.println("done");
+		
+	}
 	
-	
-//--------------------------------------------------------------------------------------------------
-	
+	public static void main(String[] args) {
+		
+	}
+
+
 	public String getEmail() {
 		return email;
 	}
@@ -34,13 +53,13 @@ public class User {
 	}
 
 
-	public String getName() {
-		return name;
+	public String getFirst() {
+		return first;
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirst(String first) {
+		this.first = first;
 	}
 
 
@@ -49,11 +68,9 @@ public class User {
 	}
 
 
-
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-
 
 
 	public String getPass() {
@@ -61,25 +78,33 @@ public class User {
 	}
 
 
-
 	public void setPass(String pass) {
 		this.pass = pass;
 	}
 
+
+	public String getUserid() {
+		return userid;
+	}
+
+
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
 	
-	public String getID() {
-		return ID;
-	}
+	
+//--------------------------------------------------------------------------------------------------
+	
+	
+	
+	
 
 
-	public void setID(String iD) {
-		ID = iD;
-	}
+	
 
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-	}
+
+	
 
 }
